@@ -1,11 +1,14 @@
 package fr.redkissifrott.tourGuideUser.service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ import fr.redkissifrott.tourGuideUser.proxies.RewardsProxy;
 
 @Service
 public class RewardsService {
+	private Logger logger = LoggerFactory.getLogger(RewardsService.class);
 
 	private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
 
@@ -29,15 +33,17 @@ public class RewardsService {
 	private int defaultProximityBuffer = Integer.MAX_VALUE;
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = Integer.MAX_VALUE;
+	private List<Attraction> attractionsList;
 
 	@Autowired
-	private GpsUtilProxy gpsProxy;
+	private final GpsUtilProxy gpsProxy;
 	@Autowired
 	private final RewardsProxy rewardsProxy;
 
-	public RewardsService(GpsUtilProxy gpsUtil, RewardsProxy rewardsService) {
-		this.gpsProxy = gpsUtil;
-		this.rewardsProxy = rewardsService;
+	public RewardsService(GpsUtilProxy gpsProxy, RewardsProxy rewardsProxy) {
+		this.gpsProxy = gpsProxy;
+		this.rewardsProxy = rewardsProxy;
+		this.attractionsList = gpsProxy.getAttractions();
 	}
 
 	public void setProximityBuffer(int proximityBuffer) {
@@ -56,19 +62,13 @@ public class RewardsService {
 		this.attractionProximityRange = attractionProximityRange;
 	}
 
-	private ExecutorService executorService = Executors.newFixedThreadPool(100);
+	private ExecutorService executorService = Executors.newFixedThreadPool(250);
 
 	public CompletableFuture<Void> calculateRewards(User user) {
-
-		// logger.debug("loc :" + userLocations.size());
-		// logger.debug("att :" + attractions.size());
-		// logger.debug("REWARDS : " + user.getUserRewards().size());
 		return CompletableFuture.runAsync(() -> {
 			List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(
 					user.getVisitedLocations());
-			List<Attraction> attractions = new CopyOnWriteArrayList<>(
-					gpsProxy.getAttractions());
-			attractions.stream()
+			attractionsList.stream()
 					.filter(attraction -> user.getUserRewards().stream()
 							.filter(r -> r.attraction.attractionName
 									.equals(attraction.attractionName))
@@ -99,7 +99,6 @@ public class RewardsService {
 	}
 
 	private int getRewardPoints(Attraction attraction, User user) {
-
 		return rewardsProxy.getAttractionRewardPoints(attraction.attractionId,
 				user.getUserId());
 	}
@@ -117,6 +116,10 @@ public class RewardsService {
 		double nauticalMiles = 60 * Math.toDegrees(angle);
 		double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
 		return statuteMiles;
+	}
+
+	public int getAttractionRewardPoints(UUID attractionId, UUID userId) {
+		return rewardsProxy.getAttractionRewardPoints(attractionId, userId);
 	}
 
 }

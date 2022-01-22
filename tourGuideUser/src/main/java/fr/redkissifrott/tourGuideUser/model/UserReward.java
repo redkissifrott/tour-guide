@@ -1,5 +1,8 @@
 package fr.redkissifrott.tourGuideUser.model;
 
+import lombok.Data;
+
+@Data
 public class UserReward {
 
 	public final VisitedLocation visitedLocation;

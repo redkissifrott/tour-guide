@@ -3,6 +3,9 @@ package fr.redkissifrott.tourGuideRewards.model;
 import java.util.Date;
 import java.util.UUID;
 
+import lombok.Data;
+
+@Data
 public class VisitedLocation {
 
 	public final UUID userId;
