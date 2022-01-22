@@ -103,6 +103,13 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
+	public HashMap<UUID, Location> getAllCurrentLocations() {
+		HashMap<UUID, Location> allCurrentLocations = new HashMap<>();
+		getAllUsers().forEach(u -> allCurrentLocations.put(u.getUserId(),
+				u.getLastVisitedLocation().location));
+		return allCurrentLocations;
+	}
+
 	private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
 	public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
