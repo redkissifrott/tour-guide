@@ -14,7 +14,8 @@ import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
 public interface GpsUtilProxy {
 
 	@GetMapping(value = "/UserLocation/{userId}")
-	VisitedLocation getUserLocation(@PathVariable("userId") UUID userId);
+	VisitedLocation getUserLocation(
+			@PathVariable(required = true, name = "userId") UUID userId);
 
 	@GetMapping(value = "/Attractions")
 	List<Attraction> getAttractions();
