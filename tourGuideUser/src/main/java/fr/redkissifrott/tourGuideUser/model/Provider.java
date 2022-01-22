@@ -3,9 +3,37 @@ package fr.redkissifrott.tourGuideUser.model;
 import java.util.UUID;
 
 public class Provider {
-	public final String name;
-	public final double price;
-	public final UUID tripId;
+	public Provider() {
+		super();
+	}
+
+	public String name;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public UUID getTripId() {
+		return tripId;
+	}
+
+	public void setTripId(UUID tripId) {
+		this.tripId = tripId;
+	}
+
+	public double price;
+	public UUID tripId;
 
 	public Provider(UUID tripId, String name, double price) {
 		this.name = name;

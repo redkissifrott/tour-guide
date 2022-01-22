@@ -8,14 +8,13 @@ public class Attraction extends Location {
 	public String city;
 	public String state;
 	public UUID attractionId;
-	public double longitude;
-	public double latitude;
 
-	@Override
-	public String toString() {
-		return "Attraction [longitude=" + longitude + ", latitude=" + latitude
-				+ "]";
-	}
+	// @Override
+	// public String toString() {
+	// return "Attraction [attLongitude=" + attLongitude + ", attLatitude=" +
+	// attLatitude
+	// + "]";
+	// }
 
 	public String getAttractionName() {
 		return attractionName;
@@ -49,22 +48,6 @@ public class Attraction extends Location {
 		this.attractionId = attractionId;
 	}
 
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
 	// @Override
 	// public String toString() {
 	// return "Attraction [toString()=" + super.toString() + "]";
@@ -74,13 +57,13 @@ public class Attraction extends Location {
 		super();
 	}
 
-	public Attraction(double latitude, double longitude) {
-		super(latitude, longitude);
+	public Attraction(double attLatitude, double attLongitude) {
+		super(attLatitude, attLongitude);
 	}
 
 	public Attraction(String attractionName, String city, String state,
-			double latitude, double longitude) {
-		super(latitude, longitude);
+			double attLatitude, double attLongitude) {
+		super(attLatitude, attLongitude);
 		this.attractionName = attractionName;
 		this.city = city;
 		this.state = state;
