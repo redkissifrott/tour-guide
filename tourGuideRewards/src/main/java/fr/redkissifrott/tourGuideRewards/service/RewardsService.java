@@ -1,6 +1,7 @@
 package fr.redkissifrott.tourGuideRewards.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,6 +113,10 @@ public class RewardsService {
 		double nauticalMiles = 60 * Math.toDegrees(angle);
 		double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;
 		return statuteMiles;
+	}
+
+	public int getAttractionRewardPoints(UUID attractionId, UUID userId) {
+		return rewardsCentral.getAttractionRewardPoints(attractionId, userId);
 	}
 
 }
