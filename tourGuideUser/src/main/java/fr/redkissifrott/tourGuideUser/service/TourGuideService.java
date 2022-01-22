@@ -2,6 +2,7 @@ package fr.redkissifrott.tourGuideUser.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +11,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -18,33 +23,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.redkissifrott.tourGuideUser.Dto.ClosestAttractionsDTO;
+import fr.redkissifrott.tourGuideUser.Dto.UserClosestAttractionsDTO;
 import fr.redkissifrott.tourGuideUser.helper.InternalTestHelper;
 import fr.redkissifrott.tourGuideUser.model.Attraction;
 import fr.redkissifrott.tourGuideUser.model.Location;
+import fr.redkissifrott.tourGuideUser.model.Provider;
 import fr.redkissifrott.tourGuideUser.model.User;
 import fr.redkissifrott.tourGuideUser.model.UserReward;
 import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
 import fr.redkissifrott.tourGuideUser.proxies.GpsUtilProxy;
-import fr.redkissifrott.tourGuideUser.proxies.RewardsProxy;
+import fr.redkissifrott.tourGuideUser.proxies.TripPricerProxy;
 import fr.redkissifrott.tourGuideUser.tracker.Tracker;
 
 @Service
 public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
-
 	@Autowired
-	private final GpsUtilProxy gpsUtil;
+	private final GpsUtilProxy gpsProxy;
 	@Autowired
-	private final RewardsProxy rewardsService;
-
-	// TODO :insert TripPricer
-	//
-
+	private final RewardsService rewardsService;
+	@Autowired
+	private TripPricerProxy tripPricerProxy;
 	public final Tracker tracker;
 	boolean testMode = true;
 
-	public TourGuideService(GpsUtilProxy gpsUtil, RewardsProxy rewardsService) {
-		this.gpsUtil = gpsUtil;
+	public TourGuideService(GpsUtilProxy gpsProxy,
+			RewardsService rewardsService) {
+		this.gpsProxy = gpsProxy;
 		this.rewardsService = rewardsService;
 
 		if (testMode) {
@@ -71,6 +77,22 @@ public class TourGuideService {
 		}
 	}
 
+	public List<UserReward> getUserRewards(User user) {
+		return user.getUserRewards();
+	}
+
+	public List<Provider> getTripDeals(User user) {
+		int cumulatativeRewardPoints = user.getUserRewards().stream()
+				.mapToInt(i -> i.getRewardPoints()).sum();
+		List<Provider> providers = tripPricerProxy.getPrice(tripPricerApiKey,
+				user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
+				user.getUserPreferences().getNumberOfChildren(),
+				user.getUserPreferences().getTripDuration(),
+				cumulatativeRewardPoints);
+		user.setTripDeals(providers);
+		return providers;
+	}
+
 	public VisitedLocation getUserLocation(User user) {
 
 		VisitedLocation visitedLocation = (user.getVisitedLocations()
@@ -79,25 +101,63 @@ public class TourGuideService {
 						: trackUserLocation(user);
 		return visitedLocation;
 	}
-	public VisitedLocation trackUserLocation(User user) {
 
+	private ExecutorService executorService = Executors.newFixedThreadPool(100);
+
+	public VisitedLocation trackUserLocation(User user) {
 		Locale.setDefault(new Locale("en", "US"));
-		VisitedLocation visitedLocation = gpsUtil
-				.getUserLocation(user.getUserId());
-		user.addToVisitedLocations(visitedLocation);
-		// TODO insert calculateRewards
-		// rewardsService.calculateRewards(user);
+
+		try {
+			return CompletableFuture.supplyAsync(() -> {
+				logger.debug("Track1");
+				VisitedLocation visitedLocation = gpsProxy
+						.getUserLocation(user.getUserId());
+				logger.debug("Track2");
+				user.addToVisitedLocations(visitedLocation);
+				logger.debug("Track3");
+				rewardsService.calculateRewards(user).join();
+				logger.debug("Track4");
+				logger.debug("user :" + user.getUserRewards().size());
+
+				return visitedLocation;
+			}, executorService).get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	public List<Attraction> getNearByAttractions(
 			VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = gpsUtil.getAttractions().stream()
+		List<Attraction> nearbyAttractions = gpsProxy.getAttractions().stream()
 				.sorted(Comparator.comparing(attraction -> rewardsService
 						.getDistance(attraction, visitedLocation.location)))
 				.limit(5).collect(Collectors.toList());
 
 		return nearbyAttractions;
+	}
+
+	public UserClosestAttractionsDTO getUserClosestAttractions(
+			String userName) {
+		VisitedLocation visitedLocation = getUserLocation(getUser(userName));
+		List<Attraction> nearbyAttractions = getNearByAttractions(
+				visitedLocation);
+		List<ClosestAttractionsDTO> closestAttractionsDTOs = new ArrayList<>();
+		nearbyAttractions.forEach(attraction -> closestAttractionsDTOs
+				.add(new ClosestAttractionsDTO(attraction.attractionName,
+						attraction.latitude, attraction.longitude,
+						rewardsService.getDistance(attraction,
+								visitedLocation.location),
+						rewardsService.getAttractionRewardPoints(
+								attraction.attractionId,
+								getUser(userName).getUserId()))));
+		return new UserClosestAttractionsDTO(visitedLocation.location,
+				closestAttractionsDTOs);
+
 	}
 
 	private void addShutDownHook() {
@@ -127,7 +187,7 @@ public class TourGuideService {
 					generateUserLocationHistory(user);
 
 					internalUserMap.put(userName, user);
-					logger.debug("Created " + user.getLastVisitedLocation());
+					// logger.debug("Created " + user.getLastVisitedLocation());
 				});
 		logger.debug("Created " + InternalTestHelper.getInternalUserNumber()
 				+ " internal test users.");
@@ -161,7 +221,4 @@ public class TourGuideService {
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
 
-	public List<UserReward> getUserRewards(User user) {
-		return user.getUserRewards();
-	}
 }
