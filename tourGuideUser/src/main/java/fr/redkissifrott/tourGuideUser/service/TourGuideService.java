@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -39,6 +38,7 @@ import fr.redkissifrott.tourGuideUser.tracker.Tracker;
 @Service
 public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
+
 	@Autowired
 	private final GpsUtilProxy gpsProxy;
 	@Autowired
@@ -48,6 +48,7 @@ public class TourGuideService {
 	public final Tracker tracker;
 	boolean testMode = true;
 
+	@Autowired
 	public TourGuideService(GpsUtilProxy gpsProxy,
 			RewardsService rewardsService) {
 		this.gpsProxy = gpsProxy;
@@ -98,37 +99,28 @@ public class TourGuideService {
 		VisitedLocation visitedLocation = (user.getVisitedLocations()
 				.size() > 0)
 						? user.getLastVisitedLocation()
-						: trackUserLocation(user);
+						: trackUserLocation(user).join();
 		return visitedLocation;
 	}
 
 	private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
-	public VisitedLocation trackUserLocation(User user) {
+	public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
 		Locale.setDefault(new Locale("en", "US"));
 
-		try {
-			return CompletableFuture.supplyAsync(() -> {
-				logger.debug("Track1");
-				VisitedLocation visitedLocation = gpsProxy
-						.getUserLocation(user.getUserId());
-				logger.debug("Track2");
-				user.addToVisitedLocations(visitedLocation);
-				logger.debug("Track3");
-				rewardsService.calculateRewards(user).join();
-				logger.debug("Track4");
-				logger.debug("user :" + user.getUserRewards().size());
+		return CompletableFuture.supplyAsync(() -> {
+			logger.debug("Track1");
+			VisitedLocation visitedLocation = gpsProxy
+					.getUserLocation(user.getUserId());
+			logger.debug("Track2");
+			user.addToVisitedLocations(visitedLocation);
+			logger.debug("Track3");
+			rewardsService.calculateRewards(user).join();
+			logger.debug("Track4");
+			logger.debug("user :" + user.getUserRewards().size());
 
-				return visitedLocation;
-			}, executorService).get();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+			return visitedLocation;
+		}, executorService);
 	}
 
 	public List<Attraction> getNearByAttractions(

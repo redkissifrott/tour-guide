@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.redkissifrott.tourGuideUser.helper.InternalTestHelper;
 import fr.redkissifrott.tourGuideUser.model.User;
 import fr.redkissifrott.tourGuideUser.proxies.GpsUtilProxy;
-import fr.redkissifrott.tourGuideUser.proxies.RewardsProxy;
+import fr.redkissifrott.tourGuideUser.service.RewardsService;
 import fr.redkissifrott.tourGuideUser.service.TourGuideService;
 
 class TestTrackLocation {
@@ -21,7 +21,7 @@ class TestTrackLocation {
 	@Autowired
 	private GpsUtilProxy gpsUtil;
 	@Autowired
-	private RewardsProxy rewardsService;
+	private RewardsService rewardsService;
 
 	@Test
 	public void highVolumeTrackLocation() {

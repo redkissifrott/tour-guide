@@ -13,14 +13,13 @@ import fr.redkissifrott.tourGuideUser.helper.InternalTestHelper;
 import fr.redkissifrott.tourGuideUser.model.User;
 import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
 import fr.redkissifrott.tourGuideUser.proxies.GpsUtilProxy;
-import fr.redkissifrott.tourGuideUser.proxies.RewardsProxy;
 
 public class TestTourGuideService {
 
 	@Autowired
 	private GpsUtilProxy gpsUtil;
 	@Autowired
-	private RewardsProxy rewardsService;
+	private RewardsService rewardsService;
 
 	@Test
 	public void getUserLocation() {
@@ -35,7 +34,7 @@ public class TestTourGuideService {
 		User user = new User(UUID.randomUUID(), "jon", "000",
 				"jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService
-				.trackUserLocation(user);
+				.trackUserLocation(user).join();
 		tourGuideService.tracker.stopTracking();
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
 	}
@@ -103,7 +102,7 @@ public class TestTourGuideService {
 		User user = new User(UUID.randomUUID(), "jon", "000",
 				"jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService
-				.trackUserLocation(user);
+				.trackUserLocation(user).join();
 
 		tourGuideService.tracker.stopTracking();
 
