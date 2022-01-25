@@ -13,9 +13,4 @@ public class Config {
 		Locale.setDefault(Locale.US);
 		return Locale.getDefault();
 	}
-
-	// @Bean
-	// public RewardsService getRewardsService() {
-	// return new RewardsService(getGpsUtil(), getRewardCentral());
-	// }
 }

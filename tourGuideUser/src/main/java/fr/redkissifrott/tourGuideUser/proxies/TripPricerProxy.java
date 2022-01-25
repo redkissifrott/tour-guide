@@ -12,7 +12,7 @@ import fr.redkissifrott.tourGuideUser.model.Provider;
 @FeignClient(name = "tourGuideTripPricer", url = "localhost:9004")
 public interface TripPricerProxy {
 
-	@GetMapping(value = "/AttractionRewardPoints/{trippricerapikey}/{userId}/{numberOfAdults}/{numberOfChildren}/{tripDuration}/{cumulatativeRewardPoints}")
+	@GetMapping(value = "/GetPrice/{trippricerapikey}/{userId}/{numberOfAdults}/{numberOfChildren}/{tripDuration}/{cumulatativeRewardPoints}")
 	public List<Provider> getPrice(
 			@PathVariable("trippricerapikey") String trippricerapikey,
 			@PathVariable("userId") UUID userId,

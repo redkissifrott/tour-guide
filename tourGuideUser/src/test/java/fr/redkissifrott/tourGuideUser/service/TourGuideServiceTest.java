@@ -14,7 +14,7 @@ import fr.redkissifrott.tourGuideUser.model.User;
 import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
 import fr.redkissifrott.tourGuideUser.proxies.GpsUtilProxy;
 
-public class TestTourGuideService {
+public class TourGuideServiceTest {
 
 	@Autowired
 	private GpsUtilProxy gpsUtil;

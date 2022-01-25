@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jsoniter.output.JsonStream;
-
-import fr.redkissifrott.tourGuideUser.Dto.UserClosestAttractionsDTO;
+import fr.redkissifrott.tourGuideUser.DTO.UserClosestAttractionsDTO;
+import fr.redkissifrott.tourGuideUser.DTO.UserPreferencesDTO;
 import fr.redkissifrott.tourGuideUser.model.Location;
 import fr.redkissifrott.tourGuideUser.model.Provider;
 import fr.redkissifrott.tourGuideUser.model.User;
@@ -30,11 +33,12 @@ public class TourGuideController {
 		return "Greetings from TourGuide!";
 	}
 
-	@RequestMapping("/getLocation")
-	public String getLocation(@RequestParam String userName) {
+	@GetMapping("/getLocation")
+	public Location getLocation(@RequestParam String userName) {
 		VisitedLocation visitedLocation = tourGuideService
 				.getUserLocation(getUser(userName));
-		return JsonStream.serialize(visitedLocation.location);
+		// return JsonStream.serialize(visitedLocation.location);
+		return visitedLocation.location;
 	}
 
 	// // Get the closest five tourist attractions to the user - no
@@ -46,7 +50,7 @@ public class TourGuideController {
 	// // The distance in miles between the user's location and each of the
 	// attractions.
 	// // The reward points for visiting each Attraction.
-	@RequestMapping("/getNearbyAttractions")
+	@GetMapping("/getNearbyAttractions")
 	public UserClosestAttractionsDTO getNearbyAttractions(
 			@RequestParam String userName) {
 		// return JsonStream.serialize(
@@ -54,37 +58,43 @@ public class TourGuideController {
 		return tourGuideService.getUserClosestAttractions(userName);
 	}
 	//
-	@RequestMapping("/getRewards")
+	@GetMapping("/getRewards")
 	public List<UserReward> getRewards(@RequestParam String userName) {
 		// return JsonStream
 		// .serialize(tourGuideService.getUserRewards(getUser(userName)));
 		return tourGuideService.getUserRewards(getUser(userName));
 	}
 
-	// @RequestMapping("/getPreferences")
+	@GetMapping("/getPreferences")
+	public UserPreferencesDTO getPreferences(@RequestParam String userName) {
+		return tourGuideService.getPreferences(getUser(userName));
+	}
 
-	@RequestMapping("/getAllCurrentLocations")
+	@PostMapping(value = "/postPreferences", consumes = {
+			MediaType.APPLICATION_JSON_VALUE}, produces = MediaType.APPLICATION_JSON_VALUE)
+	// public void postPreference(
+	// @RequestBody UserPreferencesDTO userPreferencesDTO) {
+	public void postPreference(
+			@RequestBody UserPreferencesDTO userPreferencesDTO) {
+		tourGuideService.postPreferences(userPreferencesDTO);
+	}
+
+	// Return object should be the just a JSON mapping of userId to
+	// Locations
+	// similar to:
+	// {
+	// "019b04a9-067a-4c76-8817-ee75088c3822":
+	// {"longitude":-48.188821,"latitude":74.84371}
+	// ...
+	// }
+	@GetMapping("/getAllCurrentLocations")
 	public HashMap<UUID, Location> getAllCurrentLocations() {
-		// TODO: Get a list of every user's most recent location as JSON
-		// - Note: does not use gpsUtil to query for their current location,
-		// but rather gathers the user's current location from their stored
-		// location history.
-		//
-		// Return object should be the just a JSON mapping of userId to
-		// Locations
-		// similar to:
-		// {
-		// "019b04a9-067a-4c76-8817-ee75088c3822":
-		// {"longitude":-48.188821,"latitude":74.84371}
-		// ...
-		// }
-
 		// return
 		// JsonStream.serialize(tourGuideService.getAllCurrentLocations());
 		return tourGuideService.getAllCurrentLocations();
 	}
 
-	@RequestMapping("/getTripDeals")
+	@GetMapping("/getTripDeals")
 	public List<Provider> getTripDeals(@RequestParam String userName) {
 		List<Provider> providers = tourGuideService
 				.getTripDeals(getUser(userName));

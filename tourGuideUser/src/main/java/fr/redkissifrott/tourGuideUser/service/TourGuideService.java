@@ -22,13 +22,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.redkissifrott.tourGuideUser.Dto.ClosestAttractionsDTO;
-import fr.redkissifrott.tourGuideUser.Dto.UserClosestAttractionsDTO;
+import fr.redkissifrott.tourGuideUser.DTO.ClosestAttractionsDTO;
+import fr.redkissifrott.tourGuideUser.DTO.UserClosestAttractionsDTO;
+import fr.redkissifrott.tourGuideUser.DTO.UserPreferencesDTO;
 import fr.redkissifrott.tourGuideUser.helper.InternalTestHelper;
 import fr.redkissifrott.tourGuideUser.model.Attraction;
 import fr.redkissifrott.tourGuideUser.model.Location;
 import fr.redkissifrott.tourGuideUser.model.Provider;
 import fr.redkissifrott.tourGuideUser.model.User;
+import fr.redkissifrott.tourGuideUser.model.UserPreferences;
 import fr.redkissifrott.tourGuideUser.model.UserReward;
 import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
 import fr.redkissifrott.tourGuideUser.proxies.GpsUtilProxy;
@@ -82,6 +84,16 @@ public class TourGuideService {
 		return user.getUserRewards();
 	}
 
+	public UserPreferencesDTO getPreferences(User user) {
+		return new UserPreferencesDTO(user.getUserName(),
+				user.getUserPreferences());
+	}
+
+	public void postPreferences(UserPreferencesDTO userPreferencesDTO) {
+		User user = getUser(userPreferencesDTO.getUsername());
+		user.setUserPreferences(new UserPreferences(userPreferencesDTO));
+	}
+
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream()
 				.mapToInt(i -> i.getRewardPoints()).sum();
@@ -90,12 +102,14 @@ public class TourGuideService {
 				user.getUserPreferences().getNumberOfChildren(),
 				user.getUserPreferences().getTripDuration(),
 				cumulatativeRewardPoints);
+		logger.debug("prov " + providers.size());
 		user.setTripDeals(providers);
 		return providers;
 	}
 
 	public VisitedLocation getUserLocation(User user) {
-
+		logger.debug("user" + user.getUserName());
+		logger.debug("visLoc" + user.getLastVisitedLocation());
 		VisitedLocation visitedLocation = (user.getVisitedLocations()
 				.size() > 0)
 						? user.getLastVisitedLocation()
@@ -116,14 +130,10 @@ public class TourGuideService {
 		Locale.setDefault(new Locale("en", "US"));
 
 		return CompletableFuture.supplyAsync(() -> {
-			logger.debug("Track1");
 			VisitedLocation visitedLocation = gpsProxy
 					.getUserLocation(user.getUserId());
-			logger.debug("Track2");
 			user.addToVisitedLocations(visitedLocation);
-			logger.debug("Track3");
 			rewardsService.calculateRewards(user).join();
-			logger.debug("Track4");
 			logger.debug("user :" + user.getUserRewards().size());
 
 			return visitedLocation;

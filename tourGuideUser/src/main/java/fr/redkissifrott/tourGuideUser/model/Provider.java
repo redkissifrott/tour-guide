@@ -8,6 +8,9 @@ public class Provider {
 	}
 
 	public String name;
+	public double price;
+	public UUID tripId;
+
 	public String getName() {
 		return name;
 	}
@@ -31,9 +34,6 @@ public class Provider {
 	public void setTripId(UUID tripId) {
 		this.tripId = tripId;
 	}
-
-	public double price;
-	public UUID tripId;
 
 	public Provider(UUID tripId, String name, double price) {
 		this.name = name;

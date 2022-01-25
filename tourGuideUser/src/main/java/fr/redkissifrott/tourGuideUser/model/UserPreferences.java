@@ -5,6 +5,8 @@ import javax.money.Monetary;
 
 import org.javamoney.moneta.Money;
 
+import fr.redkissifrott.tourGuideUser.DTO.UserPreferencesDTO;
+
 public class UserPreferences {
 
 	private int attractionProximity = Integer.MAX_VALUE;
@@ -17,6 +19,12 @@ public class UserPreferences {
 	private int numberOfChildren = 0;
 
 	public UserPreferences() {
+	}
+
+	public UserPreferences(UserPreferencesDTO userPreferencesDTO) {
+		this.numberOfAdults = userPreferencesDTO.getNumberOfAdults();
+		this.numberOfChildren = userPreferencesDTO.getNumberOfChildren();
+		this.tripDuration = userPreferencesDTO.getTripDuration();
 	}
 
 	public void setAttractionProximity(int attractionProximity) {

@@ -1,4 +1,4 @@
-package fr.redkissifrott.tourGuideUser.Dto;
+package fr.redkissifrott.tourGuideUser.DTO;
 
 import java.util.List;
 

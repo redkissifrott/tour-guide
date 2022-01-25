@@ -1,4 +1,4 @@
-package fr.redkissifrott.tourGuideRewards;
+package fr.redkissifrott.tourGuideTripPricer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

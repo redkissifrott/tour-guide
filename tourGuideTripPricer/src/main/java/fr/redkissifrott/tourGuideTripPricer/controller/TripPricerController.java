@@ -22,7 +22,7 @@ public class TripPricerController {
 		return "Greetings from TourGuide!";
 	}
 
-	@GetMapping(value = "/AttractionRewardPoints/{trippricerapikey}/{userId}/{numberOfAdults}/{numberOfChildren}/{tripDuration}/{cumulatativeRewardPoints}")
+	@GetMapping(value = "/GetPrice/{trippricerapikey}/{userId}/{numberOfAdults}/{numberOfChildren}/{tripDuration}/{cumulatativeRewardPoints}")
 	public List<Provider> getPrice(
 			@PathVariable("trippricerapikey") String trippricerapikey,
 			@PathVariable("userId") UUID userId,
