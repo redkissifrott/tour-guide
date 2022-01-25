@@ -19,11 +19,6 @@ public class GpsController {
 	@Autowired
 	GpsService gpsService;
 
-	@RequestMapping("/")
-	public String index() {
-		return "Greetings from TourGuide!";
-	}
-
 	@RequestMapping(value = "/UserLocation/{userId}", method = RequestMethod.GET)
 	public VisitedLocation getUserLocation(
 			@PathVariable(required = true, name = "userId") UUID userId) {
@@ -33,8 +28,6 @@ public class GpsController {
 	@RequestMapping(value = "/Attractions", method = RequestMethod.GET)
 	List<Attraction> getAttractions() throws Exception {
 		List<Attraction> attractions = gpsService.getAttractions();
-		if (attractions.isEmpty())
-			throw new Exception("Aucune attraction trouvée");
 		return attractions;
 	}
 
