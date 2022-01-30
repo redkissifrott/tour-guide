@@ -3,9 +3,7 @@ package fr.redkissifrott.tourGuideUser.DTO;
 import java.util.List;
 
 import fr.redkissifrott.tourGuideUser.model.Location;
-import lombok.Data;
 
-@Data
 public class UserClosestAttractionsDTO {
 
 	public UserClosestAttractionsDTO(Location userPosition,
@@ -16,5 +14,8 @@ public class UserClosestAttractionsDTO {
 	}
 	Location userPosition;
 	List<ClosestAttractionsDTO> closestAttractions;
+	public List<ClosestAttractionsDTO> getClosestAttractions() {
+		return closestAttractions;
+	}
 
 }

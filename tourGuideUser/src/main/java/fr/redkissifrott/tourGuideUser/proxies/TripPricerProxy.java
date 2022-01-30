@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import fr.redkissifrott.tourGuideUser.model.Provider;
 
-@FeignClient(name = "tourGuideTripPricer", url = "localhost:9004")
+@FeignClient(name = "tourGuideTripPricer", url = "${tripPricerProxy}")
+// @FeignClient(name = "tourGuideTripPricer", url =
+// "http://tour-guide-trip-pricer:9004")
 public interface TripPricerProxy {
 
 	@GetMapping(value = "/GetPrice/{trippricerapikey}/{userId}/{numberOfAdults}/{numberOfChildren}/{tripDuration}/{cumulatativeRewardPoints}")

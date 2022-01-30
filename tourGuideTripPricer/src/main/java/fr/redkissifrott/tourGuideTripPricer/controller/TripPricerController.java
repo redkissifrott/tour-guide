@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.redkissifrott.tourGuideTripPricer.service.TripPricerService;
@@ -16,11 +15,6 @@ import tripPricer.Provider;
 public class TripPricerController {
 	@Autowired
 	TripPricerService tripPricerService;
-
-	@RequestMapping("/")
-	public String index() {
-		return "Greetings from TourGuide!";
-	}
 
 	@GetMapping(value = "/GetPrice/{trippricerapikey}/{userId}/{numberOfAdults}/{numberOfChildren}/{tripDuration}/{cumulatativeRewardPoints}")
 	public List<Provider> getPrice(

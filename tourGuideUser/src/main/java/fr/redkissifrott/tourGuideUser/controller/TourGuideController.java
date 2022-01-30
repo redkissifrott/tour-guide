@@ -10,16 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.redkissifrott.tourGuideUser.DTO.UserClosestAttractionsDTO;
 import fr.redkissifrott.tourGuideUser.DTO.UserPreferencesDTO;
+import fr.redkissifrott.tourGuideUser.model.Attraction;
 import fr.redkissifrott.tourGuideUser.model.Location;
 import fr.redkissifrott.tourGuideUser.model.Provider;
 import fr.redkissifrott.tourGuideUser.model.User;
 import fr.redkissifrott.tourGuideUser.model.UserReward;
 import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
+import fr.redkissifrott.tourGuideUser.service.RewardsService;
 import fr.redkissifrott.tourGuideUser.service.TourGuideService;
 
 @RestController
@@ -27,6 +30,9 @@ public class TourGuideController {
 
 	@Autowired
 	TourGuideService tourGuideService;
+
+	@Autowired
+	RewardsService rewardsService;
 
 	@RequestMapping("/")
 	public String index() {
@@ -68,6 +74,12 @@ public class TourGuideController {
 	@GetMapping("/getPreferences")
 	public UserPreferencesDTO getPreferences(@RequestParam String userName) {
 		return tourGuideService.getPreferences(getUser(userName));
+	}
+
+	@RequestMapping(value = "/Attractions", method = RequestMethod.GET)
+	List<Attraction> getAttractions() throws Exception {
+		List<Attraction> attractions = rewardsService.getAttractionsList();
+		return attractions;
 	}
 
 	@PostMapping(value = "/postPreferences", consumes = {

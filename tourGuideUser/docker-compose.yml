@@ -1,0 +1,41 @@
+version: '3.3'
+
+services:
+  tourGuideUser:
+    build: ""
+    image: tour-guide-user
+    container_name: tour-guide-user
+    depends_on:
+    - tourGuideGps 
+    - tourGuideRewards
+    - tourGuideTripPricer
+    ports:
+    - 9001:9001
+    
+  tourGuideRewards:
+    build: "../tourGuideRewards"
+    image: tour-guide-rewards
+    container_name: tour-guide-rewards
+    depends_on:
+    - tourGuideGps
+    ports:
+    - 9003:9003
+    
+  tourGuideTripPricer:
+    build: "../tourGuideTripPricer"
+    image: tour-guide-trip-pricer
+    container_name: tour-guide-trip-pricer
+    ports:
+    - 9004:9004        
+    
+  tourGuideGps:
+    build: "../tourGuideGps"
+    image: tour-guide-gps
+    container_name: tour-guide-gps
+    ports:
+    - 9002:9002
+    healthcheck :
+      test: "exit 0"
+      
+  
+    

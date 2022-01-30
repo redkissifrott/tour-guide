@@ -8,11 +8,6 @@ import lombok.Data;
 @Data
 public class VisitedLocation {
 
-	// TODO : Final !
-	// public final UUID userId;
-	// public final Location location;
-	// public final Date timeVisited;
-
 	public UUID userId;
 	public Location location;
 	public Date timeVisited;

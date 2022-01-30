@@ -102,14 +102,11 @@ public class TourGuideService {
 				user.getUserPreferences().getNumberOfChildren(),
 				user.getUserPreferences().getTripDuration(),
 				cumulatativeRewardPoints);
-		logger.debug("prov " + providers.size());
 		user.setTripDeals(providers);
 		return providers;
 	}
 
 	public VisitedLocation getUserLocation(User user) {
-		logger.debug("user" + user.getUserName());
-		logger.debug("visLoc" + user.getLastVisitedLocation());
 		VisitedLocation visitedLocation = (user.getVisitedLocations()
 				.size() > 0)
 						? user.getLastVisitedLocation()
@@ -134,8 +131,6 @@ public class TourGuideService {
 					.getUserLocation(user.getUserId());
 			user.addToVisitedLocations(visitedLocation);
 			rewardsService.calculateRewards(user).join();
-			logger.debug("user :" + user.getUserRewards().size());
-
 			return visitedLocation;
 		}, executorService);
 	}

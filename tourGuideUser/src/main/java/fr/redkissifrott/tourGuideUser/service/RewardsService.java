@@ -46,6 +46,14 @@ public class RewardsService {
 		this.attractionsList = gpsProxy.getAttractions();
 	}
 
+	public List<Attraction> getAttractionsList() {
+		return attractionsList;
+	}
+
+	public void setAttractionsList(List<Attraction> attractionsList) {
+		this.attractionsList = attractionsList;
+	}
+
 	public void setProximityBuffer(int proximityBuffer) {
 		this.proximityBuffer = proximityBuffer;
 	}
@@ -68,6 +76,7 @@ public class RewardsService {
 		return CompletableFuture.runAsync(() -> {
 			List<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(
 					user.getVisitedLocations());
+			// List<Attraction> attractionsList = gpsProxy.getAttractions();
 			attractionsList.stream()
 					.filter(attraction -> user.getUserRewards().stream()
 							.filter(r -> r.attraction.attractionName

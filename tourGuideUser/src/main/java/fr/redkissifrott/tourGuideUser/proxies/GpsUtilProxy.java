@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import fr.redkissifrott.tourGuideUser.model.Attraction;
 import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
 
-@FeignClient(name = "tourGuideGps", url = "localhost:9002")
+@FeignClient(name = "tourGuideGps", url = "${gpsProxy}")
+// @FeignClient(name = "tourGuideGps", url = "http://tour-guide-gps:9002")
 public interface GpsUtilProxy {
 
 	@GetMapping(value = "/UserLocation/{userId}")

@@ -36,6 +36,7 @@ dependencies {
 	implementation group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'
 	 testImplementation("junit:junit")
 	 implementation 'org.apache.commons:commons-lang3:3.11'
+	 implementation (files("libs/TripPricer.jar"))
 }
 
 dependencyManagement {

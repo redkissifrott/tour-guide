@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import fr.redkissifrott.tourGuideUser.model.Attraction;
 import fr.redkissifrott.tourGuideUser.model.Location;
 
-@FeignClient(name = "tourGuideRewards", url = "localhost:9003")
+@FeignClient(name = "tourGuideRewards", url = "${rewardsProxy}")
+// @FeignClient(name = "tourGuideRewards", url =
+// "http://tour-guide-rewards:9003")
 public interface RewardsProxy {
 
 	//

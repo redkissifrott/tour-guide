@@ -1,8 +1,5 @@
 package fr.redkissifrott.tourGuideUser.DTO;
 
-import lombok.Data;
-
-@Data
 public class ClosestAttractionsDTO {
 
 	String name;

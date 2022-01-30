@@ -18,6 +18,13 @@ public class UserPreferences {
 	private int numberOfAdults = 1;
 	private int numberOfChildren = 0;
 
+	public UserPreferences(final int numberOfAdults, final int numberOfChildren,
+			final int tripDuration) {
+		super();
+		this.tripDuration = tripDuration;
+		this.numberOfAdults = numberOfAdults;
+		this.numberOfChildren = numberOfChildren;
+	}
 	public UserPreferences() {
 	}
 

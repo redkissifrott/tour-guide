@@ -24,6 +24,7 @@ import fr.redkissifrott.tourGuideUser.model.Provider;
 import fr.redkissifrott.tourGuideUser.model.User;
 import fr.redkissifrott.tourGuideUser.model.UserReward;
 import fr.redkissifrott.tourGuideUser.model.VisitedLocation;
+import fr.redkissifrott.tourGuideUser.service.RewardsService;
 import fr.redkissifrott.tourGuideUser.service.TourGuideService;
 
 @WebMvcTest(controllers = TourGuideController.class)
@@ -34,6 +35,9 @@ public class TourGuideControllerTest {
 
 	@MockBean
 	private TourGuideService tourGuideService;
+
+	@MockBean
+	private RewardsService rewardsService;
 
 	private User getUser(String userName) {
 		return tourGuideService.getUser(userName);

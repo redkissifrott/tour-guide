@@ -1,14 +1,14 @@
 package fr.redkissifrott.tourGuideUser.model;
 
-import lombok.Data;
-
-@Data
 public class Location {
-	// @Override
-	// public String toString() {
-	// return "Location [longitude=" + longitude + ", latitude=" + latitude
-	// + "]";
-	// }
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
 
 	public double longitude;
 	public double latitude;
