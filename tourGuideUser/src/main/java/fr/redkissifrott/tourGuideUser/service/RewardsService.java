@@ -70,7 +70,7 @@ public class RewardsService {
 		this.attractionProximityRange = attractionProximityRange;
 	}
 
-	private ExecutorService executorService = Executors.newFixedThreadPool(250);
+	private ExecutorService executorService = Executors.newFixedThreadPool(150);
 
 	public CompletableFuture<Void> calculateRewards(User user) {
 		return CompletableFuture.runAsync(() -> {

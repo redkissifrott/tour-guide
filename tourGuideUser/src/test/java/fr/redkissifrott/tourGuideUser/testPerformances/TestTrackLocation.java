@@ -39,7 +39,7 @@ class TestTrackLocation {
 		// 15 minutes
 		rewardsService.setProximityBuffer(10);
 		rewardsService.setAttractionProximityRange(200);
-		InternalTestHelper.setInternalUserNumber(50000);
+		InternalTestHelper.setInternalUserNumber(100);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil,
 				rewardsService);
 

@@ -6,13 +6,13 @@ import fr.redkissifrott.tourGuideUser.model.Location;
 
 public class UserClosestAttractionsDTO {
 
-	public UserClosestAttractionsDTO(Location userPosition,
+	public UserClosestAttractionsDTO(Location userLocation,
 			List<ClosestAttractionsDTO> closestAttractions) {
 		super();
-		this.userPosition = userPosition;
+		this.userLocation = userLocation;
 		this.closestAttractions = closestAttractions;
 	}
-	Location userPosition;
+	Location userLocation;
 	List<ClosestAttractionsDTO> closestAttractions;
 	public List<ClosestAttractionsDTO> getClosestAttractions() {
 		return closestAttractions;

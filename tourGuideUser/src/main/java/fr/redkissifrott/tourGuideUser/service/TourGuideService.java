@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -121,10 +120,9 @@ public class TourGuideService {
 		return allCurrentLocations;
 	}
 
-	private ExecutorService executorService = Executors.newFixedThreadPool(100);
+	private ExecutorService executorService = Executors.newFixedThreadPool(150);
 
 	public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
-		Locale.setDefault(new Locale("en", "US"));
 
 		return CompletableFuture.supplyAsync(() -> {
 			VisitedLocation visitedLocation = gpsProxy
